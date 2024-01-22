@@ -1,0 +1,106 @@
+class UserCollection<T> : ICollection<T>
+{
+    T[] elements = new T[0];
+
+    public void Add(T item)
+    {
+        var newArray = new T[elements.Length + 1];
+        elements.CopyTo(newArray, 0);
+        newArray[newArray.Length - 1] = item;
+        elements = newArray;
+    }
+
+    // Удаляет все элементы из коллекции ICollection<T>
+    public void Clear()
+    {
+        elements = new T[0];
+    }
+
+    //Определяет, содержит ли интерфейс ICollection<T> указанное значение
+    public bool Contains(T item)
+    {
+        foreach ( var element in elements)
+        {
+            if ( element.Equals(item) )
+            {
+                return true;
+            }            
+        }
+        return false;
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        elements.CopyTo( array, arrayIndex );
+    }
+
+    public int Count
+    {
+        get { return elements.Length; }
+    }
+
+    public bool IsReadOnly
+    {
+        get { return false; }
+    }
+
+    public bool Remove(T item)
+    {
+        var newArray = new T[elements.Length - 1];
+
+        if (this.Contains(item))
+        {
+            var index = Array.IndexOf(elements, item);
+
+            //--------------------------------------------------
+            if (index == 0)
+            {
+                for (var i = index; i < elements.Length - 1; i++)
+                    newArray[i] = elements[i + 1];
+
+                elements = newArray; 
+            }
+
+            //--------------------------------------------------
+            if (index == elements.Length - 1)
+            {
+
+                for (var i = 0; i < elements.Length - 1; i++)
+                {
+                    newArray[i] = elements[i];
+                }
+
+                elements = newArray;
+            }
+
+            //--------------------------------------------------
+            if (index > 0)
+            {
+                for (var i = 0; i < index; i++)
+                    newArray[i] = elements[i];
+
+                for (var j = index; j < elements.Length - 1; j++)
+                    newArray[j] = elements[j + 1];
+
+                elements = newArray; 
+            }
+
+            return true;
+        }
+
+        Console.WriteLine("{0} - Нет такого елемента в массиве!!!", item);
+        return false;       
+    }
+
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return ((IEnumerable<T>) elements).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return(this as IEnumerable<T>).GetEnumerator();
+    }
+
+}
